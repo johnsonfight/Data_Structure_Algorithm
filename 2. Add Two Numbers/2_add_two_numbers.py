@@ -17,13 +17,14 @@ class Solution:
             carry = total // 10
             digit = total % 10
 
+            # new node
             curr.next = ListNode(digit)
-            curr = curr.next
 
-            if l1:
-                l1 = l1.next
-            if l2:
-                l2 = l2.next
+            # update ptr
+            curr = curr.next
+            l1 = l1.next if l1 else None
+            l2 = l2.next if l2 else None
+
 
         return l_out.next
    
