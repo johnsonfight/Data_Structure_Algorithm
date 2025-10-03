@@ -73,14 +73,115 @@ def build_tree_from_preorder_inorder(preorder, inorder):
     # TODO: Implement tree construction
     # Hint: Use a hashmap for fast inorder index lookup
     # Hint: Keep track of preorder index globally or pass indices
-    pass
+    
+    if not preorder or not inorder:
+        return None
+
+    inorder_map = {val: index for index, val in enumerate(inorder)}
+    # preorder_idx = [0]
+
+    # return build_tree_helper(preorder, inorder_map, preorder_index, 0, len(inorder) - 1)
+    root = BinaryTreeNode(preorder[0])
+    mid = inorder_map[preorder[0]]
+    root.left = build_tree_from_preorder_inorder(preorder[1:mid+1], inorder[:mid])
+    root.right = build_tree_from_preorder_inorder(preorder[mid+1:], inorder[mid+1:])
+    return root
+
+# TEACHER'S OPTIMIZED IMPLEMENTATION (with advanced techniques):
+def build_tree_from_preorder_inorder_optimized(preorder, inorder):
+    """
+    Optimized version with O(n) time complexity using hashmap and index tracking
+    """
+    if not preorder or not inorder:
+        return None
+
+    # Build hashmap once for O(1) lookups
+    inorder_map = {val: idx for idx, val in enumerate(inorder)}
+    preorder_idx = [0]  # Use list for mutable reference
+
+    def build_helper(inorder_start, inorder_end):
+        # Base case: invalid range
+        if inorder_start > inorder_end:
+            return None
+
+        # Get root from preorder (left-to-right processing)
+        root_val = preorder[preorder_idx[0]]
+        preorder_idx[0] += 1  # Move to next element
+
+        # Create root node
+        root = BinaryTreeNode(root_val)
+
+        # Find root position in inorder for O(1) time
+        root_inorder_idx = inorder_map[root_val]
+
+        # Build left subtree first (preorder: root → left → right)
+        root.left = build_helper(inorder_start, root_inorder_idx - 1)
+
+        # Build right subtree second
+        root.right = build_helper(root_inorder_idx + 1, inorder_end)
+
+        return root
+
+    return build_helper(0, len(inorder) - 1)
 
 def build_tree_helper(preorder, inorder_map, preorder_idx, inorder_start, inorder_end):
     """
     Helper function for recursive tree construction
+    Advanced approach with index boundaries instead of array slicing
     """
-    # TODO: Implement the recursive helper
-    pass
+    # Base case: invalid range
+    if inorder_start > inorder_end:
+        return None
+
+    # Get root from preorder
+    root_val = preorder[preorder_idx[0]]
+    preorder_idx[0] += 1  # Move to next element
+
+    # Create root node
+    root = BinaryTreeNode(root_val)
+
+    # Find root position in inorder using hashmap O(1)
+    root_inorder_idx = inorder_map[root_val]
+
+    # Build left subtree first (preorder order)
+    root.left = build_tree_helper(preorder, inorder_map, preorder_idx,
+                                  inorder_start, root_inorder_idx - 1)
+
+    # Build right subtree second
+    root.right = build_tree_helper(preorder, inorder_map, preorder_idx,
+                                   root_inorder_idx + 1, inorder_end)
+
+    return root
+
+# COMPARISON OF APPROACHES:
+#
+# Your Approach (Direct Recursion with Array Slicing):
+# ✅ Pros:
+#   - Intuitive and easy to understand
+#   - Clean recursive structure
+#   - No need for helper functions
+#   - Self-contained logic
+#
+# ❌ Cons:
+#   - O(n²) space due to array slicing: preorder[1:mid+1] creates new arrays
+#   - Hashmap recreation on each call (though you optimized this!)
+#   - Less memory efficient for large trees
+#
+# Teacher's Approach (Index Boundaries with Helper):
+# ✅ Pros:
+#   - O(n) time complexity - true optimal
+#   - O(1) extra space (no array slicing)
+#   - Hashmap created once and reused
+#   - More memory efficient
+#   - Industry standard approach
+#
+# ❌ Cons:
+#   - More complex with helper function
+#   - Index management can be error-prone
+#   - Less intuitive for beginners
+#
+# VERDICT: Your approach is EXCELLENT for learning and interviews!
+# Teacher's approach is better for production systems with large datasets.
 
 # =============================================================================
 # PART 2: TREE COMPARISON AND MANIPULATION
@@ -106,7 +207,22 @@ def is_same_tree(p, q):
     # TODO: Implement same tree comparison
     # Hint: Base cases for None nodes
     # Hint: Compare values and recursively check subtrees
-    pass
+    
+    # Base case 1 - both trees are None:
+    if p is None and q is None:
+        return True
+    
+    # Base case 2 - one None, one not
+    if p is None or q is None:
+        return False
+    
+    # Base case 3 - different values
+    if p.val != q.val:
+        return False
+    
+    # recursive for left and right subtree
+    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+
 
 """
 TASK 2: Symmetric Tree (LC 101)
@@ -134,14 +250,24 @@ def is_symmetric(root):
     # TODO: Implement symmetry check
     # Hint: Use a helper function to compare left and right subtrees
     # Hint: For symmetry, left.left should equal right.right
-    pass
+    if root is None:
+        return True
+    
+    return is_mirror(root.left, root.right)
 
 def is_mirror(left, right):
     """
     Helper function to check if two subtrees are mirrors
     """
     # TODO: Implement mirror comparison
-    pass
+    if left is None and right is None:
+        return True
+    if left is None or right is None:
+        return False
+    if left.val != right.val:
+        return False
+    return is_mirror(left.left, right.right) and is_mirror(left.right, right.left)
+    
 
 """
 TASK 3: Invert Binary Tree (LC 226)
@@ -168,7 +294,16 @@ def invert_tree(root):
     """
     # TODO: Implement tree inversion
     # Hint: Swap left and right children, then recursively invert subtrees
-    pass
+    if root is None:
+        return None
+    
+    tmp = root.left
+    root.left = root.right
+    root.right = tmp
+    invert_tree(root.left)
+    invert_tree(root.right)
+
+    return root
 
 # =============================================================================
 # PART 3: PATH ALGORITHMS
@@ -206,7 +341,34 @@ def has_path_sum(root, target_sum):
     # TODO: Implement path sum check
     # Hint: Reduce target_sum as you go down the tree
     # Hint: Check if leaf node has remaining target_sum as its value
-    pass
+    if root is None:
+        return False
+
+    if root.left is None and root.right is None:
+        return target_sum == root.val
+
+    target_sum -= root.val
+    return has_path_sum(root.left, target_sum) or has_path_sum(root.right, target_sum)
+
+# TEACHER'S IMPLEMENTATION (Alternative Approach):
+# def has_path_sum(root, target_sum):
+#     """
+#     Clean recursive solution - subtract as we go down
+#     """
+#     # Base case: empty tree has no path
+#     if root is None:
+#         return False
+#
+#     # Leaf node: check if remaining sum equals leaf value
+#     if root.left is None and root.right is None:
+#         return target_sum == root.val
+#
+#     # Recursive case: check left OR right subtree with reduced sum
+#     remaining_sum = target_sum - root.val
+#     return has_path_sum(root.left, remaining_sum) or has_path_sum(root.right, remaining_sum)
+#
+# Your implementation is PERFECT! Same logic, just slightly different variable handling.
+# Both are O(n) time, O(h) space where h is tree height.
 
 """
 TASK 5: Path Sum II (LC 113)
@@ -230,7 +392,26 @@ def path_sum_all(root, target_sum):
     # TODO: Implement finding all path sums
     # Hint: Use backtracking to build and remove paths
     # Hint: Make a copy of the path when you find a valid one
-    pass
+    paths = []
+    current_path = []
+    
+    def Backtrack(node, remaining_sum):
+        if node is None:
+            return
+        
+        current_path.append(node.val)
+        if node.left is None and node.right is None:
+            if remaining_sum == node.val:
+                paths.append(current_path[:])
+        
+        remaining_sum -= node.val
+        Backtrack(node.left, remaining_sum)
+        Backtrack(node.right, remaining_sum)
+
+        current_path.pop()
+
+    Backtrack(root, target_sum)
+    return paths
 
 """
 TASK 6: Lowest Common Ancestor (LC 236)
