@@ -84,7 +84,15 @@ def is_balanced(root):
     # TODO: Implement balanced tree check
     # Hint: Use a helper function that returns height
     # Hint: Return -1 if subtree is unbalanced
-    pass
+    if root == None:
+        return True
+    
+    height_left = get_height(root.left)
+    height_right = get_height(root.right)
+    if abs(height_left - height_right) <= 1:
+        return is_balanced(root.left) and is_balanced(root.right)
+    else:
+        return False
 
 def get_height(node):
     """
@@ -93,7 +101,9 @@ def get_height(node):
     # TODO: Implement height calculation
     # Hint: Height of None is 0 (or -1, depending on definition)
     # Hint: Height of node = 1 + max(left_height, right_height)
-    pass
+    if node == None:
+        return 0
+    return 1 + max(get_height(node.left), get_height(node.right))
 
 # TEACHER'S OPTIMAL IMPLEMENTATION:
 def is_balanced_optimal(root):
@@ -146,7 +156,7 @@ Balance Factor:
 - BF > 1 or < -1: IMBALANCED! Need rotation!
 
 Example:
-        10 (BF=0)
+        10 (BF=1)
        /  \
       5   15 (BF=0)
      / \
@@ -184,7 +194,9 @@ def get_balance_factor(node):
     # TODO: Implement balance factor calculation
     # Hint: BF = height(left) - height(right)
     # Hint: Use get_height_avl() to handle None nodes
-    pass
+    if node is None:
+        return 0
+    return get_height_avl(node.left) - get_height_avl(node.right)
 
 def update_height(node):
     """
@@ -192,34 +204,67 @@ def update_height(node):
     """
     # TODO: Implement height update
     # Hint: height = 1 + max(left_height, right_height)
-    pass
+    node.height = 1 + max(get_height_avl(node.left), get_height_avl(node.right))
 
 # =============================================================================
 # PART 3: AVL ROTATIONS
 # =============================================================================
 
 """
-CONCEPT: Tree Rotations
-========================
+CONCEPT: Tree Rotations - The Magic of Self-Balancing!
+=======================================================
 
-When a tree becomes IMBALANCED, we use ROTATIONS to fix it!
+WHY DO WE NEED ROTATIONS?
+When we insert/delete nodes, the tree can become unbalanced. Rotations are
+POINTER REASSIGNMENTS that restructure the tree to restore balance WITHOUT
+changing the BST property (left < root < right)!
 
-There are 4 cases:
-1. Left-Left (LL):   Right rotation
-2. Right-Right (RR): Left rotation
-3. Left-Right (LR):  Left rotation on left child, then right rotation
-4. Right-Left (RL):  Right rotation on right child, then left rotation
+Think of rotations as "pivoting" the tree around a node.
 
-ROTATION EXAMPLE - Right Rotation:
+RIGHT ROTATION (fixes Left-Heavy imbalance):
+============================================
 
-    Before:           After:
-       30 (BF=2)        20 (BF=0)
-      /               /    \
-     20             10      30
+    BEFORE (imbalanced):        AFTER (balanced):
+         z (BF=2)                    y (BF=0)
+        /                          /   \
+       y            →             x     z
+      /
+     x
+
+Step-by-step what happens:
+1. Save y = z.left (y will become new root)
+2. Save T2 = y.right (y's right child, if exists)
+3. Make z become y's right child: y.right = z
+4. Attach T2 as z's left child: z.left = T2
+5. Update heights: z first, then y (bottom-up!)
+6. Return y as the new root
+
+Example with values:
+    Before:              After:
+       30                  20
+      /                  /    \
+     20        →        10     30
     /
    10
 
-We "rotate right" around 30 to balance the tree!
+Notice: BST property preserved! 10 < 20 < 30 ✓
+
+LEFT ROTATION (fixes Right-Heavy imbalance):
+=============================================
+Just the MIRROR of right rotation!
+
+    BEFORE:                 AFTER:
+       z                      y
+        \                   /   \
+         y       →         z     x
+          \
+           x
+
+The 4 rotation cases (don't worry, we'll practice!):
+1. Left-Left (LL):   Right rotation on z
+2. Right-Right (RR): Left rotation on z
+3. Left-Right (LR):  Left rotation on y, then right rotation on z
+4. Right-Left (RL):  Right rotation on y, then left rotation on z
 """
 
 def rotate_right(z):
@@ -245,7 +290,6 @@ def rotate_right(z):
     # Hint: Make z the right child of y
     # Hint: Update heights (z first, then y)
     # Hint: Return y as new root
-    pass
 
 def rotate_left(z):
     """
@@ -438,3 +482,11 @@ if __name__ == "__main__":
     print("Learn how AVL trees maintain O(log n) performance!")
     print("\nComplete the TODOs step by step!")
     print("\nRun test_balanced_trees() to see AVL trees in action!")
+
+"""
+  Related to AVL/Balanced Trees:
+
+  - LC 108: Convert Sorted Array to Binary Search Tree - Build a height-balanced BST
+  - LC 109: Convert Sorted List to Binary Search Tree - Similar, but from linked list
+  - LC 1382: Balance a Binary Search Tree - Rebalance an existing BST
+"""
