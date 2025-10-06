@@ -77,7 +77,8 @@ class MinHeap:
         # Hint: Append value to heap
         # Hint: Compare with parent and swap if needed
         # Hint: Continue until heap property restored
-        pass
+        self.heap.append(val)
+        self.heapify_up(len(self.heap) - 1)
 
     def heapify_up(self, i):
         """
@@ -86,7 +87,11 @@ class MinHeap:
         # TODO: Implement heapify up
         # Hint: While not at root and current < parent
         # Hint: Swap with parent and move up
-        pass
+        while i > 0 and self.heap[i] < self.heap[self.parent(i)]:
+            self.swap(i, self.parent(i))
+            i = self.parent(i)
+
+        return
 
     def extract_min(self):
         """
@@ -101,7 +106,16 @@ class MinHeap:
         # Hint: Handle empty heap
         # Hint: Save root, replace with last element
         # Hint: Remove last element and heapify down from root
-        pass
+        if not self.heap:
+            return None
+        if len(self.heap) == 1:
+            return self.heap.pop()
+        
+        minValue = self.heap[0]
+        self.heap[0] = self.heap.pop()
+        self.heapify_down(0)
+        return minValue
+        
 
     def heapify_down(self, i):
         """
@@ -111,7 +125,20 @@ class MinHeap:
         # Hint: Compare with both children
         # Hint: Swap with smaller child if needed
         # Hint: Continue until heap property restored
-        pass
+        min_index = i
+        left = self.left_child(i)
+        right = self.right_child(i)
+        
+        if left < len(self.heap) and self.heap[left] < self.heap[min_index]:
+            min_index = left
+        if right < len(self.heap) and self.heap[right] < self.heap[min_index]:
+            min_index = right
+
+        if min_index != i:
+            self.swap(min_index, i)
+            self.heapify_down(min_index)
+        
+        return
 
     def peek(self):
         """Return minimum without removing"""
@@ -249,6 +276,95 @@ Why Tries?
 - Fast prefix search: O(m) where m = word length
 - Autocomplete, spell check, IP routing
 - Space-efficient for common prefixes
+
+=============================================================================
+Q&A - Test Your Understanding!
+=============================================================================
+
+Q1: How is a Trie different from a Binary Tree?
+A:
+- Binary tree: Each node has at most 2 children
+- Trie: Each node can have up to 26 children (for lowercase letters)
+- Binary tree: Stores values in nodes
+- Trie: The PATH from root to node represents the string, not individual nodes
+
+Q2: What does each node in a Trie store?
+A:
+- A dictionary/map of children: {character -> TrieNode}
+- A boolean flag: is_end_of_word (marks if a word ends here)
+- (Optional) The character itself, but usually not needed
+
+Q3: After inserting ["cat", "car"], what does the Trie look like?
+A:
+        (root)
+          |
+          c
+          |
+          a
+         / \
+        t*  r*
+    (* = end of word marker)
+
+Q4: Why do we need is_end_of_word flag?
+A: To distinguish between:
+- "car" (a complete word) vs
+- "car" as just a prefix of "card"
+
+Without the flag, we couldn't tell if "car" was inserted or just exists as a prefix.
+
+Q5: What's the time complexity of insert, search, and startsWith?
+A: All are O(m) where m = length of the word
+- NOT O(log n) like BST!
+- Independent of number of words stored
+- Only depends on word length
+
+Q6: How much space does a Trie use?
+A: In worst case: O(ALPHABET_SIZE * total_characters * N)
+- ALPHABET_SIZE = 26 for lowercase
+- But with shared prefixes, it's much better!
+- Example: ["cat", "car", "card"] share "ca" - stored once
+
+Q7: When inserting "cat", what happens at each step?
+A:
+1. Start at root
+2. Check if 'c' child exists → if not, create new node
+3. Move to 'c' node
+4. Check if 'a' child exists → if not, create new node
+5. Move to 'a' node
+6. Check if 't' child exists → if not, create new node
+7. Move to 't' node
+8. Mark 't' node as is_end_of_word = True
+
+Q8: How does search("cat") work?
+A:
+1. Start at root
+2. Try to follow 'c' → if doesn't exist, return False
+3. Try to follow 'a' → if doesn't exist, return False
+4. Try to follow 't' → if doesn't exist, return False
+5. Check if current node has is_end_of_word = True
+6. Return the result
+
+Q9: How is startsWith("ca") different from search("ca")?
+A:
+- search("ca"): Must find 'c'→'a' AND check is_end_of_word = True
+- startsWith("ca"): Only needs to find path 'c'→'a', ignore is_end_of_word
+- startsWith returns True if the prefix exists, regardless of complete words
+
+Q10: Trie vs Hash Map for storing words - when to use which?
+A:
+Use Trie when:
+- ✅ Need prefix search (autocomplete)
+- ✅ Need to find all words with prefix
+- ✅ Many words share prefixes (space efficient)
+- ✅ Want sorted iteration
+
+Use Hash Map when:
+- ✅ Only need exact word lookup
+- ✅ No prefix operations needed
+- ✅ Simpler to implement
+- ✅ Less memory overhead per word
+
+=============================================================================
 """
 
 class TrieNode:
