@@ -130,7 +130,8 @@ class MyHashSet:
         Hint: Each bucket is a list
         """
         # TODO: Initialize data structure
-        pass
+        self.size = 1000
+        self.buckets = [[] for _ in range(self.size)]
 
     def _hash(self, key):
         """
@@ -143,7 +144,7 @@ class MyHashSet:
             int - hash code (index)
         """
         # TODO: Return key % size
-        pass
+        return key % self.size
 
     def add(self, key):
         """
@@ -153,7 +154,9 @@ class MyHashSet:
             key: int - key to add
         """
         # TODO: Get hash, check if exists, add if not
-        pass
+        index = self._hash(key)
+        if key not in self.buckets[index]:
+            self.buckets[index].append(key)
 
     def remove(self, key):
         """
@@ -163,7 +166,9 @@ class MyHashSet:
             key: int - key to remove
         """
         # TODO: Get hash, find and remove from bucket
-        pass
+        index = self._hash(key)
+        if key in self.buckets[index]:
+            self.buckets[index].remove(key)
 
     def contains(self, key):
         """
@@ -176,7 +181,9 @@ class MyHashSet:
             bool - True if exists
         """
         # TODO: Get hash, search in bucket
-        pass
+        index = self._hash(key)
+        if key in self.buckets[index]:
+            return True
 
 # TEACHER'S SOLUTION:
 class MyHashSetSolution:
