@@ -304,16 +304,16 @@ Custom comparators, hybrid patterns, complex problems
 
 ## Sorting Algorithms Comparison
 
-| Algorithm | Time (Avg) | Time (Worst) | Space | Stable | In-place |
-|-----------|------------|--------------|-------|--------|----------|
-| Bubble Sort | O(n²) | O(n²) | O(1) | ✅ | ✅ |
-| Selection Sort | O(n²) | O(n²) | O(1) | ❌ | ✅ |
-| Insertion Sort | O(n²) | O(n²) | O(1) | ✅ | ✅ |
-| Merge Sort | O(n log n) | O(n log n) | O(n) | ✅ | ❌ |
-| Quick Sort | O(n log n) | O(n²) | O(log n) | ❌ | ✅ |
-| Heap Sort | O(n log n) | O(n log n) | O(1) | ❌ | ✅ |
-| Counting Sort | O(n+k) | O(n+k) | O(k) | ✅ | ❌ |
-| Radix Sort | O(d·n) | O(d·n) | O(n+k) | ✅ | ❌ |
+| Algorithm      | Time (Avg) | Time (Worst) | Space   | Stable | In-place |
+|----------------|------------|--------------|---------|--------|----------|
+| Bubble Sort    | O(n²)      | O(n²)        | O(1)    | ✅     | ✅        |
+| Selection Sort | O(n²)      | O(n²)        | O(1)    | ❌     | ✅        |
+| Insertion Sort | O(n²)      | O(n²)        | O(1)    | ✅     | ✅        |
+| Merge Sort     | O(n log n) | O(n log n)   | O(n)    | ✅     | ❌        |
+| Quick Sort     | O(n log n) | O(n²)        | O(log n)| ❌     | ✅        |
+| Heap Sort      | O(n log n) | O(n log n)   | O(1)    | ❌     | ✅        |
+| Counting Sort  | O(n+k)     | O(n+k)       | O(k)    | ✅     | ❌        |
+| Radix Sort     | O(d·n)     | O(d·n)       | O(n+k)  | ✅     | ❌        |
 
 ---
 
