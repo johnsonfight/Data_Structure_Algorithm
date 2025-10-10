@@ -260,7 +260,9 @@ class NumArray:
         """
         # TODO: Build prefix sum array
         # Hint: prefix[i] = prefix[i-1] + nums[i]
-        pass
+        self.prefix_sum = [0]
+        for num in nums:
+            self.prefix_sum.append(self.prefix_sum[-1] + num)
 
     def sumRange(self, left, right):
         """
@@ -276,7 +278,11 @@ class NumArray:
         # TODO: Calculate range sum using prefix array
         # Hint: prefix[right] - prefix[left-1]
         # Hint: Handle left = 0 case
-        pass
+        """
+        arr = [1, 2, 3, 4, 5]
+     prefix = [0, 1, 3, 6, 10, 15]
+        """
+        return self.prefix_sum[right + 1] - self.prefix_sum[left]
 
 # TEACHER'S SOLUTION:
 class NumArraySolution:
@@ -368,7 +374,12 @@ def reverse_array(nums):
     # TODO: Implement using two pointers
     # Hint: left = 0, right = len-1
     # Hint: Swap and move toward center
-    pass
+    l = 0
+    r = len(nums) - 1
+    while l < r:
+        nums[l], nums[r] = nums[r], nums[l]
+        l += 1
+        r -= 1
 
 # TEACHER'S SOLUTION:
 def reverse_array_solution(nums):
@@ -399,7 +410,18 @@ def rotate_array(nums, k):
     # Hint: Reverse entire array
     # Hint: Reverse first k elements
     # Hint: Reverse remaining elements
-    pass
+    k = k % len(nums)
+
+    def reverse(start, end):
+        while start < end:
+            nums[start], nums[end] = nums[end], nums[start]
+            start += 1
+            end -= 1
+
+    reverse(0, len(nums) - 1)
+    reverse(0, k - 1)
+    reverse(k, len(nums) - 1)
+        
 
 # TEACHER'S SOLUTION:
 def rotate_array_solution(nums, k):
