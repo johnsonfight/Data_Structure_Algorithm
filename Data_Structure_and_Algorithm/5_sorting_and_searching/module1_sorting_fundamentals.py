@@ -99,7 +99,19 @@ def bubble_sort(arr):
     # Hint: Nested loops - outer for passes, inner for comparisons
     # Hint: Swap if arr[j] > arr[j+1]
     # Hint: Optimization: if no swaps in a pass, array is sorted
-    pass
+    n = len(arr)
+
+    for i in range(n - 1):
+        swapped = False
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+            
+        if not swapped:
+            break
+            
+    return arr
 
 # TEACHER'S SOLUTION:
 def bubble_sort_solution(arr):
@@ -171,7 +183,16 @@ def selection_sort(arr):
     # Hint: Outer loop for each position
     # Hint: Inner loop to find minimum in remaining array
     # Hint: Swap minimum with current position
-    pass
+    n = len(arr)
+
+    for i in range(n):
+        min_index = i
+        for j in range(i + 1, n):
+            if arr[min_index] > arr[j]:
+                min_index = j
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+
+    return arr
 
 # TEACHER'S SOLUTION:
 def selection_sort_solution(arr):
@@ -244,7 +265,15 @@ def insertion_sort(arr):
     # Hint: Store current element as key
     # Hint: Shift larger elements right
     # Hint: Insert key in correct position
-    pass
+    for i in range(1, len(arr)):
+        pick = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > pick:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = pick
+    
+    return arr
 
 # TEACHER'S SOLUTION:
 def insertion_sort_solution(arr):
