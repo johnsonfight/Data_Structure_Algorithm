@@ -414,7 +414,24 @@ def mergeTwoLists(list1, list2):
     # Hint: Use pointer to build result list
     # Hint: Compare list1.val vs list2.val
     # Hint: Attach remaining list when one is exhausted
-    pass
+    dummy = ListNode()
+    curr = dummy
+
+    while list1 and list2:
+        if list1.val <= list2.val:
+            curr.next = list1
+            curr = curr.next
+            list1 = list1.next
+        else:
+            curr.next = list2
+            curr = curr.next
+            list2 = list2.next
+    
+    if list1: curr.next = list1
+    if list2: curr.next = list2
+    # curr.next = list1 if list1 else list2
+
+    return dummy.next
 
 # TEACHER'S SOLUTION:
 def mergeTwoLists_solution(list1, list2):
@@ -463,7 +480,22 @@ def sortList(head):
     # Hint: Split list into two halves
     # Hint: Recursively sort both halves
     # Hint: Merge sorted halves
-    pass
+    if not head or not head.next:
+        return head
+    
+    slow = head
+    fast = head.next
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    
+    mid = slow.next
+    slow.next = None
+
+    left = sortList(head)
+    right = sortList(mid)
+
+    return mergeTwoLists(left, right)
 
 # TEACHER'S SOLUTION:
 def sortList_solution(head):
