@@ -123,7 +123,16 @@ def partition(arr, low, high):
     # Hint: i tracks boundary of elements ≤ pivot
     # Hint: Scan with j, swap when arr[j] ≤ pivot
     # Hint: Finally swap pivot to position i+1
-    pass
+    pivot = arr[high]
+    i = low - 1
+
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
 
 # TEACHER'S SOLUTION:
 def partition_solution(arr, low, high):
@@ -172,7 +181,16 @@ def quick_sort(arr, low=0, high=None):
     # Hint: Partition array, get pivot index
     # Hint: Recursively sort left partition (low to pivot-1)
     # Hint: Recursively sort right partition (pivot+1 to high)
-    pass
+    if high is None:
+        high = len(arr) - 1
+    
+    if low < high:
+        pivot_idx = partition(arr, low, high)
+
+        quick_sort(arr, low, pivot_idx - 1)
+        quick_sort(arr, pivot_idx + 1, high)
+        
+    return arr
 
 # TEACHER'S SOLUTION:
 def quick_sort_solution(arr, low=0, high=None):
@@ -237,24 +255,49 @@ Key insight: After partition, pivot is at its final sorted position.
 - If pivot_idx < k, search right partition
 
 Example: Find 3rd smallest in [10, 7, 8, 9, 1, 5] (k=2, 0-indexed)
+Expected: arr[2] in sorted array [1, 5, 7, 8, 9, 10] = 7
 
-Step 1: Partition [10, 7, 8, 9, 1, 5] → [1, 5, 8, 9, 10, 7], pivot_idx=1
-        k=2 > pivot_idx=1, search right
+Step 1: Call quick_select(arr, k=2, low=0, high=5)
+        Partition around pivot=5 (last element)
+        [10, 7, 8, 9, 1, 5] → [1, 5, 8, 9, 10, 7]
+                                  ↑
+                            pivot_idx = 1
 
-Step 2: Partition [8, 9, 10, 7] → [7, 8, 10, 9], pivot_idx=3 (in original)
-        Adjust for subarray: k=2, pivot in subarray at position 1
-        k=2 > 1, search right
+        Compare: k=2 vs pivot_idx=1
+        Since k > pivot_idx, we need to search RIGHT partition
+        The Kth smallest must be in indices [2, 7] (right of pivot)
 
-Step 3: Find [10, 9], return 9 or 10 depending on logic
+Step 2: Call quick_select(arr, k=2, low=2, high=5)
+        We only search indices [2, 5] (elements 8, 9, 10, 7)
+        Partition around pivot=7 (arr[5])
+        [1, 5, 8, 9, 10, 7] → [1, 5, 7, 8, 9, 10]
+             ↑
+        Indices [2,5] rearranged, pivot_idx = 2
+
+        Compare: k=2 vs pivot_idx=2
+        They match! Found it!
+
+Step 3: Return arr[2] = 7 ✓
+
+Trace visualization:
+[10, 7, 8, 9, 1, 5]  low=0, high=5, k=2
+[1,  5, 8, 9, 10, 7] partition → pivot_idx=1, k > 1 → search right
+                 ↓ search [8, 9, 10, 7]
+[1,  5, 7, 8, 9, 10] partition → pivot_idx=2, k == 2 → FOUND!
+            ↑
+        Return 7
 
 Time Complexity:
-- Average: O(n) - each partition reduces search space by half
-- Worst: O(n²) - but randomization makes this extremely unlikely
+- Average: O(n) - each partition reduces search space by ~half
+- Worst: O(n²) - when pivot is always at extreme (rare with randomization)
 """
 
 def quick_select(arr, k):
     """
     Find Kth smallest element (0-indexed) using Quick Select
+
+    This is a wrapper function with a simple 2-parameter interface.
+    Internally, it calls a recursive helper with low/high boundaries.
 
     Example:
         arr = [3, 2, 1, 5, 6, 4], k = 2
@@ -268,10 +311,12 @@ def quick_select(arr, k):
         int - Kth smallest element
     """
     # TODO: Implement quick select
-    # Hint: Partition array
+    # Hint: Create a nested helper function with (arr, k, low, high) parameters
+    # Hint: Helper function partitions array and recursively searches one side
     # Hint: If pivot_idx == k, return arr[k]
-    # Hint: If k < pivot_idx, search left
-    # Hint: If k > pivot_idx, search right
+    # Hint: If k < pivot_idx, search left partition
+    # Hint: If k > pivot_idx, search right partition
+    # Hint: Call helper with initial low=0, high=len(arr)-1
     pass
 
 # TEACHER'S SOLUTION:
