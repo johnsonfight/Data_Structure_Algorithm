@@ -111,7 +111,14 @@ def build_adjacency_list(n, edges, directed=False):
     # TODO: Implement
     # Hint: Use defaultdict(list)
     # Hint: For undirected, add both u→v and v→u
-    pass
+    graph = defaultdict(list)
+
+    for u, v in edges:
+        graph[u].append(v)
+        if not directed:
+            graph[v].append(u)
+
+    return graph
 
 # TEACHER'S SOLUTION:
 def build_adjacency_list_solution(n, edges, directed=False):
@@ -136,12 +143,67 @@ def build_adjacency_matrix(n, edges, directed=False):
 
     Returns:
         List[List[int]] - n x n matrix
+
+    EXAMPLE (Undirected Graph):
+    ============================
+    Input:
+        n = 4
+        edges = [[0,1], [0,2], [1,3], [2,3]]
+        directed = False
+
+    Output (4x4 matrix):
+            0  1  2  3
+        0 [ 0  1  1  0 ]  ← Row 0: edges to vertices 1, 2
+        1 [ 1  0  0  1 ]  ← Row 1: edges to vertices 0, 3
+        2 [ 1  0  0  1 ]  ← Row 2: edges to vertices 0, 3
+        3 [ 0  1  1  0 ]  ← Row 3: edges to vertices 1, 2
+
+    How to read the matrix:
+        - matrix[u][v] = 1 means there IS an edge between u and v
+        - matrix[u][v] = 0 means there is NO edge between u and v
+        - For undirected: matrix[u][v] = matrix[v][u] (symmetric!)
+        - For directed: only one direction is marked
+
+    Visualization of graph:
+        0 --- 1
+        |     |
+        2 --- 3
+
+    EXAMPLE (Directed Graph):
+    ==========================
+    Input:
+        n = 4
+        edges = [[0,1], [0,2], [1,3], [2,3]]
+        directed = True
+
+    Output (4x4 matrix):
+            0  1  2  3
+        0 [ 0  1  1  0 ]  ← Row 0: outgoing edges to 1, 2
+        1 [ 0  0  0  1 ]  ← Row 1: outgoing edge to 3
+        2 [ 0  0  0  1 ]  ← Row 2: outgoing edge to 3
+        3 [ 0  0  0  0 ]  ← Row 3: no outgoing edges
+
+    How to read:
+        - matrix[0][1] = 1 means edge 0→1 exists
+        - matrix[1][0] = 0 means edge 1→0 does NOT exist (one-way!)
+        - NOT symmetric for directed graphs
+
+    Visualization of graph:
+        0 → 1
+        ↓   ↓
+        2 → 3
     """
     # TODO: Implement
     # Hint: Create n x n matrix of zeros
     # Hint: Set matrix[u][v] = 1 for each edge
     # Hint: For undirected, also set matrix[v][u] = 1
-    pass
+    matrix = [[0] * n for _ in range(n)]
+
+    for u, v in edges:
+        matrix[u][v] = 1
+        if not directed:
+            matrix[v][u] = 1
+    return matrix
 
 # TEACHER'S SOLUTION:
 def build_adjacency_matrix_solution(n, edges, directed=False):
@@ -166,8 +228,13 @@ def adjacency_list_to_matrix(graph, n):
     Returns:
         List[List[int]] - adjacency matrix
     """
-    # TODO: Implement conversion
-    pass
+    matrix = [[0] * n for _ in range(n)]
+
+    for u in graph:
+        for v in graph[u]:
+            matrix[u][v] = 1
+
+    return matrix
 
 # TEACHER'S SOLUTION:
 def adjacency_list_to_matrix_solution(graph, n):
@@ -197,7 +264,14 @@ def count_edges(graph, directed=False):
     """
     # TODO: Count edges
     # Hint: For undirected, divide by 2 (each edge counted twice)
-    pass
+    total = 0
+    for vertices in graph.values():
+        total += len(vertices)
+
+    if not directed:
+        total //= 2
+
+    return total
 
 # TEACHER'S SOLUTION:
 def count_edges_solution(graph, directed=False):
@@ -225,8 +299,8 @@ def get_degree(graph, node, directed=False):
     Returns:
         int - degree (or out-degree for directed)
     """
-    # TODO: Return number of neighbors
-    pass
+
+    return len(graph[node])
 
 # TEACHER'S SOLUTION:
 def get_degree_solution(graph, node, directed=False):
@@ -245,7 +319,7 @@ def has_edge(graph, u, v):
         bool - True if edge exists
     """
     # TODO: Check if v in graph[u]
-    pass
+    return v in graph.get(u, [])
 
 # TEACHER'S SOLUTION:
 def has_edge_solution(graph, u, v):
@@ -278,7 +352,18 @@ def findJudge(n, trust):
     # TODO: Implement
     # Hint: Track in-degree and out-degree for each person
     # Hint: Judge has in-degree = n-1 and out-degree = 0
-    pass
+    outgoing = defaultdict(int)
+    incoming = defaultdict(int)
+    
+    for src, dst in trust:
+        outgoing[src] += 1
+        incoming[dst] += 1
+
+    for i in range(1, n + 1):
+        if outgoing[i] == 0 and incoming[i] == n - 1:
+            return i
+        
+    return -1
 
 # TEACHER'S SOLUTION:
 def findJudge_solution(n, trust):
