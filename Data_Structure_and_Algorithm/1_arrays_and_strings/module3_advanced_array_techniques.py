@@ -63,13 +63,34 @@ def merge(intervals):
     # Hint: Sort by start time first
     # Hint: Iterate and merge if current.start <= previous.end
     # Hint: Update end to max(prev.end, curr.end)
-    pass
+    if not intervals:
+        return []
+    
+    intervals.sort(key = lambda x : x[0])
+
+    merged = [intervals[0]] # [[1,3]]
+    for current in intervals[1:]: # [2,6] in [[2,6],[8,10],[15,18]]
+        last = merged[-1]  # [1,3]
+        if current[0] <= last[1]:
+            last[1] = max(last[1], current[1])
+        else:
+            merged.append(current)
+    
+    return merged
+
 
 # TEACHER'S SOLUTION:
 def merge_solution(intervals):
     """
     Sort + greedy merge
     O(n log n) time, O(n) space
+
+    [[1,3],[2,6],[8,10],[15,18]]
+
+    1 - 3
+      2 - - - 6
+                  8 - 10
+                                  15 - - 18
     """
     if not intervals:
         return []
@@ -77,10 +98,10 @@ def merge_solution(intervals):
     # Sort by start time
     intervals.sort(key=lambda x: x[0])
 
-    merged = [intervals[0]]
+    merged = [intervals[0]] # [[1,3]]
 
-    for current in intervals[1:]:
-        last = merged[-1]
+    for current in intervals[1:]: # [[2,6],[8,10],[15,18]]
+        last = merged[-1] # [1,3]
 
         # Check overlap: current starts before last ends
         if current[0] <= last[1]:
