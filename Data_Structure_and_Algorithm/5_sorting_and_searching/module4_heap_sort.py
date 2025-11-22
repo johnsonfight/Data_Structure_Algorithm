@@ -123,7 +123,19 @@ def heapify_down(arr, n, i):
     # Hint: Calculate left = 2*i + 1, right = 2*i + 2
     # Hint: Find largest among arr[i], arr[left], arr[right]
     # Hint: If largest is not i, swap and recursively heapify
-    pass
+    left = 2 * i + 1
+    right = 2 * i + 2
+    largest = i
+
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify_down(arr, n ,largest)
 
 # TEACHER'S SOLUTION:
 def heapify_down_solution(arr, n, i):
@@ -179,7 +191,11 @@ def heapify_up(arr, i):
     # TODO: Implement heapify up
     # Hint: parent = (i - 1) // 2
     # Hint: While i > 0 and arr[i] > arr[parent], swap and move up
-    pass
+    parent = (i - 1) // 2
+
+    if i > 0 and arr[i] > arr[parent]:
+        arr[i], arr[parent] = arr[parent], arr[i]
+        heapify_up(arr, parent)
 
 # TEACHER'S SOLUTION:
 def heapify_up_solution(arr, i):
@@ -223,7 +239,16 @@ def build_max_heap(arr):
     # Hint: n = len(arr)
     # Hint: Start from (n//2 - 1) down to 0
     # Hint: Call heapify_down for each node
-    pass
+
+    """
+            10
+          20  15
+        30  40 
+    """
+    n = len(arr) # n = 5
+
+    for i in range(n // 2 - 1, -1, -1): # for i = 1 (20), 0 (10)
+        heapify_down(arr, n, i)
 
 # TEACHER'S SOLUTION:
 def build_max_heap_solution(arr):
