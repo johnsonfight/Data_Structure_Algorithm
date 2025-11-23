@@ -319,7 +319,15 @@ def heap_sort(arr):
     # Hint: Step 1 - Build max heap
     # Hint: Step 2 - Extract max n-1 times
     # Hint: For each extraction: swap arr[0] with arr[i], heapify_down
-    pass
+    n = len(arr)
+
+    build_max_heap(arr)
+
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify_down(arr, i, 0)
+
+    return arr
 
 # TEACHER'S SOLUTION:
 def heap_sort_solution(arr):
@@ -409,7 +417,37 @@ def findKthLargest(nums, k):
     # Hint: Maintain heap of size k
     # Hint: If len(heap) > k, pop smallest
     # Hint: Return heap[0] (smallest of k largest)
-    pass
+    """
+    After talk with Claude, here's my approach that also works
+    # Option 1: Using heapify (since all elements are ready)
+                # heap = nums.copy()
+                # heapq.heapify(heap)  # Convert to min-heap in O(n)
+                # while len(heap) > k:
+                #     heapq.heappop(heap)
+                # return heap[0]
+
+    However, the heappush/heappop approach still works and is commonly used:
+
+    # Option 2: Using heappush/heappop (more flexible pattern)
+                heap = []
+                for num in nums:
+                    heapq.heappush(heap, num)
+                    if len(heap) > k:
+                        heapq.heappop(heap)
+                return heap[0]
+
+    Which is better?
+    - heapify approach: O(n) to build heap + O(n log k) to pop → faster overall
+    - heappush/heappop approach: O(n log k) total → simpler, more intuitive
+    """
+    heap = []
+    for num in nums:
+        heapq.heappush(heap, num)
+        if len(heap) > k:
+            heapq.heappop(heap)
+
+    return heap[0]
+
 
 # TEACHER'S SOLUTION:
 def findKthLargest_solution(nums, k):
